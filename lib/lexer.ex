@@ -5,6 +5,6 @@ defmodule Lexer do
   end
   
   def lex(acc, <<>>) do
-    Enum.reverse(acc)
+    Enum.reverse([:eof | acc])
   end
 end
