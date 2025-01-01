@@ -1,4 +1,6 @@
 defmodule Token do
+  def tokenize(?[), do: :lbracket
+  def tokenize(?]), do: :rbracket
   def tokenize(?{), do: :lcurly
   def tokenize(?}), do: :rcurly
   def tokenize(?:), do: :colon

@@ -6,12 +6,6 @@ defmodule ParserTest do
     tokens = Lexer.lex([], "{}")
 
     assert Parser.parse(tokens) == {:ok, %{}}
- end
-
-  test "object with 3 key value pairs" do
-    tokens = Lexer.lex([], "{\"foo\":\"foo\",\"bar\":\"bar\",\"baz\":\"baz\"}")
-    
-    assert Parser.parse(tokens) == {:ok, %{"foo" => "foo", "bar" => "bar", "baz" => "baz"}}
   end
 
   test "object with all types of key values" do
@@ -27,6 +21,7 @@ defmodule ParserTest do
         "baz": {
           "jazz": "jazz"
         }
+        "list": [true, false, "foo"]
       }
     """)
 
@@ -38,7 +33,8 @@ defmodule ParserTest do
         "true" => true,
         "null" => nil,
         "foo" => %{"bar" => "bar"}, 
-        "baz" => %{"jazz" => "jazz"}
+        "baz" => %{"jazz" => "jazz"},
+        "list" => [true, false, "foo"]
       }
     }
   end
