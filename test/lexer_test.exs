@@ -13,4 +13,8 @@ defmodule LexerTest do
   test "lex \"foo" do
     assert Lexer.lex([], "\"foo") == [{:illegal, "foo", "string is missing a trailing `\"`"}, :eof]
   end
+
+  test "lex true false null" do
+    assert Lexer.lex([], "true false null") == [:true, :false, :null, :eof]
+  end
 end

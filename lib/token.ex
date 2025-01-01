@@ -3,7 +3,13 @@ defmodule Token do
   def tokenize(?}), do: :rcurly
   def tokenize(?:), do: :colon
   def tokenize(?,), do: :comma
-  def tokenize(str), do: {:string, str}
+  def tokenize("true"), do: :true
+  def tokenize("false"), do: :false
+  def tokenize("null"), do: :null
 
-  def illegal_string(str), do: {:illegal, str, "string is missing a trailing `\"`"}
+  def tokenize_str(literal), do: {:string, literal}
+  
+  def tokenize_num(literal), do: {:number, literal}
+
+  def tokenize_illegal(literal, error_msg), do: {:illegal, literal, error_msg}
 end
