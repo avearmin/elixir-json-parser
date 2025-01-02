@@ -1,8 +1,8 @@
 defmodule Parser do 
-  def parse([:true | :eof]), do: {:ok, true}
-  def parse([:false | :eof]), do: {:ok, false}
-  def parse([:null | :eof]), do: {:ok, nil}
-  def parse([{:string, str}]), do: {:ok, str}
+  def parse([:true, :eof]), do: {:ok, true}
+  def parse([:false, :eof]), do: {:ok, false}
+  def parse([:null, :eof]), do: {:ok, nil}
+  def parse([{:string, str}, :eof]), do: {:ok, str}
 
   def parse([:lcurly | tail]) do 
     case parse_object(%{}, tail) do
@@ -58,6 +58,18 @@ defmodule Parser do
 
   defp parse_list(acc, [token, :comma | tail]) when token not in [:rbracket, :comma] do
     parse_list([json_to_elixir(token) | acc], tail)
+  end
+  
+  defp parse_list(acc, [:lcurly | tail]) do
+    case parse_object(%{}, tail) do
+      {:ok, child_object, rest} -> parse_list([child_object | acc], rest)
+    end
+  end
+
+  defp parse_list(acc, [:lbracket | tail]) do
+    case parse_list([], tail) do
+      {:ok, child_list, rest} -> parse_list([child_list | acc], rest)
+    end
   end
 
   defp json_to_elixir(:true), do: true

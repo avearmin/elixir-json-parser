@@ -8,6 +8,36 @@ defmodule ParserTest do
     assert Parser.parse(tokens) == {:ok, %{}}
   end
 
+  test "empty list" do
+    tokens = Lexer.lex([], "[]")
+
+    assert Parser.parse(tokens) == {:ok, []}
+  end
+
+  test "just string" do
+    tokens = Lexer.lex([], "\"foo\"")
+
+    assert Parser.parse(tokens) == {:ok, "foo"}
+  end
+
+  test "just true" do
+    tokens = Lexer.lex([], "true")
+
+    assert Parser.parse(tokens) == {:ok, true}
+  end
+
+  test "just false" do
+    tokens = Lexer.lex([], "false")
+
+    assert Parser.parse(tokens) == {:ok, false}
+  end
+
+  test "just null" do
+    tokens = Lexer.lex([], "null")
+
+    assert Parser.parse(tokens) == {:ok, nil}
+  end
+
   test "object with all types of key values" do
     tokens = Lexer.lex([], """
       {
@@ -37,5 +67,21 @@ defmodule ParserTest do
         "list" => [true, false, "foo"]
       }
     }
+  end
+
+  test "list with all types of elements" do
+    tokens = Lexer.lex([], """
+      [
+        "foo",
+        "bar",
+        true,
+        false,
+        null,
+        [true, false],
+        {"foo": "bar"}
+      ]
+    """)
+
+    assert Parser.parse(tokens) == {:ok, ["foo", "bar", true, false, nil, [true, false], %{"foo" => "bar"}]}
   end
 end
