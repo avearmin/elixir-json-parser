@@ -3,6 +3,7 @@ defmodule Parser do
   def parse([:false, :eof]), do: {:ok, false}
   def parse([:null, :eof]), do: {:ok, nil}
   def parse([{:string, str}, :eof]), do: {:ok, str}
+  def parse([{:number, str}, :eof]), do: {:ok, String.to_float(str)}
 
   def parse([:lcurly | tail]) do 
     case parse_object(%{}, tail) do
@@ -76,5 +77,13 @@ defmodule Parser do
   defp json_to_elixir(:false), do: false
   defp json_to_elixir(:null), do: nil
   defp json_to_elixir({:string, literal}), do: literal
+  
+  # quick and dirty way to get both floats and ints in 1 shot. 
+  # not robust so always make sure a valid float is being passed first.
+  defp json_to_elixir({:number, literal}) do
+    case Float.parse(literal) do
+      {number, _} -> number
+    end
+  end
 end
 

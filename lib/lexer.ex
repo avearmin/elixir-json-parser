@@ -42,9 +42,9 @@ defmodule Lexer do
     read_string(token_acc, [head | char_acc], tail)
   end
 
-  defp read_ident(token_acc, char_acc, <<head::utf8, tail::binary>>) when head in [?\s, ?\n] do
+  defp read_ident(token_acc, char_acc, <<head::utf8, tail::binary>>) when head in [?\s, ?\n, ?,] do
     token = Enum.reverse(char_acc) |> List.to_string() |> tokenize_ident()
-    lex([token | token_acc], tail)
+    lex([token | token_acc], <<head::utf8, tail::binary>>)
   end
 
   defp read_ident(token_acc, char_acc, <<>>) do

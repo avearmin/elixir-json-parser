@@ -20,6 +20,12 @@ defmodule ParserTest do
     assert Parser.parse(tokens) == {:ok, "foo"}
   end
 
+  test "just number" do
+    tokens = Lexer.lex([], "55.55")
+
+    assert Parser.parse(tokens) == {:ok, 55.55}
+  end
+
   test "just true" do
     tokens = Lexer.lex([], "true")
 
@@ -42,6 +48,7 @@ defmodule ParserTest do
     tokens = Lexer.lex([], """
       {
         "one": "one",
+        "55.55": 55.55,
         "false": false,
         "true": true,
         "null": null,
@@ -59,6 +66,7 @@ defmodule ParserTest do
       :ok, 
       %{
         "one" => "one",
+        "55.55" => 55.55,
         "false" => false,
         "true" => true,
         "null" => nil,
@@ -74,6 +82,8 @@ defmodule ParserTest do
       [
         "foo",
         "bar",
+        55.55,
+        600,
         true,
         false,
         null,
@@ -82,6 +92,6 @@ defmodule ParserTest do
       ]
     """)
 
-    assert Parser.parse(tokens) == {:ok, ["foo", "bar", true, false, nil, [true, false], %{"foo" => "bar"}]}
+    assert Parser.parse(tokens) == {:ok, ["foo", "bar", 55.55, 600.0, true, false, nil, [true, false], %{"foo" => "bar"}]}
   end
 end
