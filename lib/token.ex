@@ -13,5 +13,5 @@ defmodule Token do
   
   def tokenize_num(literal), do: {:number, literal}
 
-  def tokenize_illegal(literal, error_msg), do: {:illegal, literal, error_msg}
+  def tokenize_illegal(literal), do: {:illegal, literal}
 end
