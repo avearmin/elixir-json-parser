@@ -100,4 +100,23 @@ defmodule ParserTest do
 
     assert Parser.parse(tokens) == {:error, "illegal token `foo`"}
   end
+
+  test "no comma after pair in object" do
+    tokens = Lexer.lex([], "{\"foo\": true \"bar\": false}")
+
+    assert Parser.parse(tokens) == {
+      :error, 
+      "expected `,` or `}` after `\"foo\": true` but got `{:string, \"bar\"}`}"
+    } 
+  end
+
+  test "no comma after value in array" do
+    tokens = Lexer.lex([], "[true false]")
+
+    assert Parser.parse(tokens) == {
+      :error, 
+      "expected `,` or `]` after `true` but got `false`"
+    } 
+  end
+
 end

@@ -44,6 +44,9 @@ defmodule Parser do
       {:ok, value, [:rcurly | leftover]} -> 
         {:ok, Map.put(acc, key, value), leftover}
 
+      {:ok, value, [peek | _leftover]} -> 
+        {:error, "expected `,` or `}` after `#{inspect(key)}: #{inspect(value)}` but got `#{inspect(peek)}`}"}
+
       {:error, msg} -> 
         {:error, msg}
     end
@@ -58,6 +61,9 @@ defmodule Parser do
 
       {:ok, element, [:rbracket | leftover]} -> 
         {:ok, Enum.reverse([element | acc]), leftover}
+      
+      {:ok, element, [peek | _leftover]} -> 
+        {:error, "expected `,` or `]` after `#{inspect(element)}` but got `#{inspect(peek)}`"}
 
       {:error, msg} -> 
         {:error, msg}
