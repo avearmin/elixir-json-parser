@@ -57,7 +57,7 @@ defmodule ParserTest do
         },
         "baz": {
           "jazz": "jazz"
-        }
+        },
         "list": [true, false, "foo"]
       }
     """)
