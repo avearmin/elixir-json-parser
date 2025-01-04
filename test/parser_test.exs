@@ -45,54 +45,58 @@ defmodule ParserTest do
   end
 
   test "object with all types of key values" do
-    tokens = Lexer.lex([], """
-      {
-        "one": "one",
-        "55.55": 55.55,
-        "false": false,
-        "true": true,
-        "null": null,
-        "foo": {
-          "bar": "bar"
-        },
-        "baz": {
-          "jazz": "jazz"
-        },
-        "list": [true, false, "foo"]
-      }
-    """)
+    tokens =
+      Lexer.lex([], """
+        {
+          "one": "one",
+          "55.55": 55.55,
+          "false": false,
+          "true": true,
+          "null": null,
+          "foo": {
+            "bar": "bar"
+          },
+          "baz": {
+            "jazz": "jazz"
+          },
+          "list": [true, false, "foo"]
+        }
+      """)
 
     assert Parser.parse(tokens) == {
-      :ok, 
-      %{
-        "one" => "one",
-        "55.55" => 55.55,
-        "false" => false,
-        "true" => true,
-        "null" => nil,
-        "foo" => %{"bar" => "bar"}, 
-        "baz" => %{"jazz" => "jazz"},
-        "list" => [true, false, "foo"]
-      }
-    }
+             :ok,
+             %{
+               "one" => "one",
+               "55.55" => 55.55,
+               "false" => false,
+               "true" => true,
+               "null" => nil,
+               "foo" => %{"bar" => "bar"},
+               "baz" => %{"jazz" => "jazz"},
+               "list" => [true, false, "foo"]
+             }
+           }
   end
 
   test "list with all types of elements" do
-    tokens = Lexer.lex([], """
-      [
-        "foo",
-        "bar",
-        55.55,
-        600,
-        true,
-        false,
-        null,
-        [true, false],
-        {"foo": "bar"}
-      ]
-    """)
+    tokens =
+      Lexer.lex([], """
+        [
+          "foo",
+          "bar",
+          55.55,
+          600,
+          true,
+          false,
+          null,
+          [true, false],
+          {"foo": "bar"}
+        ]
+      """)
 
-    assert Parser.parse(tokens) == {:ok, ["foo", "bar", 55.55, 600.0, true, false, nil, [true, false], %{"foo" => "bar"}]}
+    assert Parser.parse(tokens) ==
+             {:ok,
+              ["foo", "bar", 55.55, 600.0, true, false, nil, [true, false], %{"foo" => "bar"}]}
   end
 
   test "illegal token" do
@@ -105,18 +109,29 @@ defmodule ParserTest do
     tokens = Lexer.lex([], "{\"foo\": true \"bar\": false}")
 
     assert Parser.parse(tokens) == {
-      :error, 
-      "expected `,` or `}` after `\"foo\": true` but got `{:string, \"bar\"}`}"
-    } 
+             :error,
+             "expected `,` or `}` after `\"foo\": true` but got `{:string, \"bar\"}`}"
+           }
   end
 
   test "no comma after value in array" do
     tokens = Lexer.lex([], "[true false]")
 
     assert Parser.parse(tokens) == {
-      :error, 
-      "expected `,` or `]` after `true` but got `false`"
-    } 
+             :error,
+             "expected `,` or `]` after `true` but got `false`"
+           }
   end
 
+  test "unexpected comma in array" do
+    tokens = Lexer.lex([], "[true, , false]")
+
+    assert Parser.parse(tokens) == {:error, "unexpected token `:comma`"}
+  end
+
+  test "unexpected comma in object" do
+    tokens = Lexer.lex([], "{\"foo\": ,}")
+    
+    assert Parser.parse(tokens) == {:error, "unexpected token `:comma`"}
+  end
 end

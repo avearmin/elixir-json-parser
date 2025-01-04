@@ -1,7 +1,7 @@
 defmodule JsonParser do
   def run() do
     for arg <- System.argv() do
-      IO.puts("#{arg} -> #{valid_json?(arg)}") 
+      IO.puts("#{arg} -> #{valid_json?(arg)}")
     end
   end
 
