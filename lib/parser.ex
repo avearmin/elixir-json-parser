@@ -16,10 +16,8 @@ defmodule Parser do
   defp parse_value([:false | rest]), do: {:ok, false, rest}
   defp parse_value([:null | rest]), do: {:ok, nil, rest}
   
-  defp parse_value([{:string, literal} | rest]) do
-    {:ok, literal, rest}
-  end
-   
+  defp parse_value([{:illegal, literal} | _rest]), do: {:error, "illegal token `#{literal}`"}
+  defp parse_value([{:string, literal} | rest]), do: {:ok, literal, rest}
   defp parse_value([{:number, literal} | rest]) do
     case Float.parse(literal) do
       {number, ""} -> 
@@ -33,13 +31,8 @@ defmodule Parser do
     end
   end
 
-  defp parse_value([:lcurly | rest]) do
-    parse_object(%{}, rest)
-  end
-
-  defp parse_value([:lbracket | rest]) do
-    parse_array([], rest)
-  end
+  defp parse_value([:lcurly | rest]), do: parse_object(%{}, rest)
+  defp parse_value([:lbracket | rest]), do: parse_array([], rest)
   
   defp parse_object(acc, [:rcurly | rest]), do: {:ok, acc, rest}
 

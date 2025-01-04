@@ -94,4 +94,10 @@ defmodule ParserTest do
 
     assert Parser.parse(tokens) == {:ok, ["foo", "bar", 55.55, 600.0, true, false, nil, [true, false], %{"foo" => "bar"}]}
   end
+
+  test "illegal token" do
+    tokens = Lexer.lex([], "foo")
+
+    assert Parser.parse(tokens) == {:error, "illegal token `foo`"}
+  end
 end
